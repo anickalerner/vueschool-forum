@@ -62,12 +62,6 @@ export default {
       default: false
     }
   },
-  mounted () {
-  },
-  data () {
-    return {}
-  },
-  methods: {},
   computed: {
     ...mapGetters({ user: 'authUser' })
   },

@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="col-full push-top">
+  <div v-if="forum" class="col-full push-top">
     <div class="forum-header">
       <div class="forum-details">
         <h1>{{ forum.name }}</h1>
@@ -8,14 +8,13 @@
       <router-link
         :to="{
           name: 'ThreadCreate',
-          params: { forumId: id }
+          params: { forumId: forum.id }
         }"
         class="btn-green btn-small"
         >Start a thread</router-link
       >
     </div>
   </div>
-
   <div class="col-full push-top">
     <ThreadList :threads="threads" />
   </div>
@@ -23,8 +22,11 @@
 
 <script lang="js">
 import ThreadList from '@/components/ThreadList.vue'
+import { findById } from '@/helpers'
+import { mapActions } from 'vuex'
 
 export default {
+  components: { ThreadList },
   name: 'page-forum',
   props: {
     id: {
@@ -32,21 +34,24 @@ export default {
       type: String
     }
   },
-  mounted () {
+  methods: {
+    ...mapActions(['fetchForum', 'fetchThreads', 'fetchUsers'])
   },
-  data () {
-    return {}
-  },
-  methods: {},
   computed: {
     forum () {
-      return this.$store.state.forums.find(forum => forum.id === this.id)
+      return findById(this.$store.state.forums, this.id)
     },
     threads () {
-      return this.$store.state.threads.filter(thread => thread.forumId === this.id)
+      if (!this.forum) return []
+      return this.forum.threads.map(threadId => this.$store.getters.threadById(threadId))
     }
   },
-  components: { ThreadList }
+  async created () {
+    const forum = await this.fetchForum({ id: this.id })
+    const threads = await this.fetchThreads({ ids: forum.threads })
+    this.fetchUsers({ ids: threads.map(thread => thread.userId) })
+  }
+
 }
 </script>
 

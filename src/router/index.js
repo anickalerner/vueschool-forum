@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { findById } from '@/helpers'
 import Home from '@/pages/Home'
 import ThreadShow from '@/pages/ThreadShow'
 import ThreadCreate from '@/pages/ThreadCreate'
@@ -37,10 +38,11 @@ const routes = [
     path: '/thread/:id',
     name: 'ThreadShow',
     component: ThreadShow,
-    props: true,
-    beforeEnter (to, from, next) {
-      checkItemPath(to, next, sourceData.threads)
-    }
+    props: true
+    // ,
+    // beforeEnter (to, from, next) {
+    //   checkItemPath(to, next, sourceData.threads)
+    // }
   },
   {
     path: '/forum/:forumId/thread/create',
@@ -74,7 +76,7 @@ const routes = [
 ]
 
 function checkItemPath (to, next, collection) {
-  const itemExists = collection.find((t) => t.id === to.params.id)
+  const itemExists = findById(collection, to.params.id)
   if (itemExists) {
     return next()
   } else {

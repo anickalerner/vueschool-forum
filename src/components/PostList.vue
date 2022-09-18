@@ -42,7 +42,7 @@
 
 <script lang="js">
 import UserInfoPost from '@/components/UserInfoPost.vue'
-
+import { mapGetters } from 'vuex'
 export default {
   name: 'post-list',
   props: {
@@ -52,19 +52,13 @@ export default {
     }
   },
   components: { UserInfoPost },
-  data () {
-    return {
-    }
-  },
   methods: {
     userById (userId) {
-      return this.users.find(u => u.id === userId)
+      return this.user(userId)
     }
   },
   computed: {
-    users () {
-      return this.$store.state.users
-    }
+    ...mapGetters(['user'])
   }
 }
 </script>

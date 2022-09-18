@@ -50,17 +50,6 @@ export default {
       type: Object
     }
   },
-  mounted () {
-
-  },
-  data () {
-    return {
-
-    }
-  },
-  methods: {
-
-  },
   computed: {
     bio () {
       return this.user.bio || 'No bio specified.'

@@ -25,7 +25,9 @@
 
     <div class="btn-group">
       <button class="btn btn-ghost" @click="$emit('cancel')">Cancel</button>
-      <button class="btn btn-blue" type="submit" :name="actionButtonText">{{ actionButtonText }}</button>
+      <button class="btn btn-blue" type="submit" :name="actionButtonText">
+        {{ actionButtonText }}
+      </button>
     </div>
   </form>
 </template>
@@ -43,9 +45,6 @@ export default {
       type: String,
       default: ''
     }
-  },
-  mounted () {
-
   },
   data () {
     return {

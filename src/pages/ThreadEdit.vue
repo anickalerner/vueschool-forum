@@ -1,9 +1,9 @@
 <template lang="html">
-  <div class="col-full push-top">
-    <h1>Edit thread {{ thread.title }}
-    </h1>
+  <div class="col-full push-top" v-if="thread">
+    <h1>Edit thread {{ title }}</h1>
     <ThreadEditor
-      :title="thread.title"
+      v-if="firstPost"
+      :title="title"
       :text="text"
       @cancel="backToThread"
       @save="save"
@@ -13,6 +13,9 @@
 
 <script lang="js">
 import ThreadEditor from '../components/ThreadEditor.vue'
+import { findById } from '@/helpers'
+import { mapActions } from 'vuex'
+
 export default {
   name: 'thread-edit',
   props: {
@@ -34,17 +37,30 @@ export default {
     },
     backToThread () {
       this.$router.push({ name: 'ThreadShow', params: { id: this.id } })
-    }
+    },
+    ...mapActions(['fetchThread', 'fetchPost'])
   },
   computed: {
     thread () {
-      return this.$store.state.threads.find(t => t.id === this.id)
+      return findById(this.$store.state.threads, this.id)
+    },
+    firstPost () {
+      if (!this.thread) return {}
+      return findById(this.$store.state.posts, this.thread.posts[0])
+    },
+    title () {
+      return this.thread ? this.thread.title : ''
     },
     text () {
-      return this.$store.state.posts.find(p => p.id === this.thread.posts[0]).text
+      return this.firstPost ? this.firstPost.text : ''
     }
   },
-  components: { ThreadEditor }
+  components: { ThreadEditor },
+  async created () {
+    const thread = await this.fetchThread({ id: this.id })
+    this.fetchPost({ id: thread.posts[0] })
+  }
+
 }
 </script>
 

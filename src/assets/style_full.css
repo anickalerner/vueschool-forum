@@ -2760,11 +2760,6 @@ section {
 ul.breadcrumbs li a {
   color: inherit;
 }
-.link-unstyled {
-  margin-inline-start: 1em;
-}
-
-,
 .faded,
 .btn:disabled,
 .btn-blue:disabled,

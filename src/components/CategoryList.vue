@@ -23,17 +23,11 @@ export default {
       type: Array
     }
   },
-  mounted () {
-  },
-  data () {
-    return {}
-  },
   methods: {
     getForums (categoryId) {
       return this.$store.state.forums.filter(f => f.categoryId === categoryId)
     }
   },
-  computed: {},
   components: { ForumList }
 }
 </script>

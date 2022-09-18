@@ -22,10 +22,6 @@
 
 export default {
   name: 'post-editor',
-  props: [],
-  mounted () {
-
-  },
   data () {
     return {
       text: ''
@@ -39,9 +35,6 @@ export default {
       this.$emit('save', { post })
       this.text = ''
     }
-  },
-  computed: {
-
   }
 }
 </script>

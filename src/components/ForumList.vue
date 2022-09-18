@@ -61,14 +61,6 @@ export default {
       type: String
     }
   },
-  mounted () {
-
-  },
-  data () {
-    return {
-
-    }
-  },
   methods: {
     getThreadsPerForum (forum) {
       return forum.threads ? forum.threads.length : 0
@@ -89,9 +81,6 @@ export default {
       }
       return word
     }
-  },
-  computed: {
-
   }
 }
 </script>

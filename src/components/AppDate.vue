@@ -1,7 +1,7 @@
 <template>
-    <span :title="humanFriendlyDate(timestamp)">
-        {{ timeFrom(timestamp) }}
-    </span>
+  <span :title="humanFriendlyDate(timestamp)">
+    {{ timeFrom(timestamp) }}
+  </span>
 </template>
 
 <script lang="js">
@@ -19,9 +19,6 @@ export default {
       type: Number
     }
   },
-  mounted () {
-
-  },
   methods: {
     timeFrom (timestamp) {
       return dayjs.unix(timestamp).fromNow()
@@ -32,5 +29,4 @@ export default {
 
   }
 }
-
 </script>

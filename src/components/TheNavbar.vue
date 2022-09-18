@@ -14,7 +14,7 @@
     <!-- use .navbar-open to open nav -->
     <nav class="navbar">
       <ul>
-        <li class="navbar-user">
+        <li v-if="authUser" class="navbar-user">
           <router-link :to="{ name: 'Profile' }">
             <img
               class="avatar-small"
@@ -74,18 +74,6 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'the-navbar',
-  props: [],
-  mounted () {
-
-  },
-  data () {
-    return {
-
-    }
-  },
-  methods: {
-
-  },
   computed: {
     ...mapGetters(['authUser'])
   }

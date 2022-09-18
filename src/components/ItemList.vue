@@ -27,6 +27,7 @@
 
 <script lang="js">
 import LastPostInfo from '@/components/LastPostInfo.vue'
+import { findById } from '@/helpers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
@@ -40,16 +41,9 @@ export default {
     }
   },
   components: { LastPostInfo },
-  mounted () {
-
-  },
-  data () {
-    return {
-    }
-  },
   methods: {
     userById (userId) {
-      return this.users.find(u => u.id === userId)
+      return findById(this.users, userId)
     },
     lastPost (threadId) {
       return this.posts.filter(p => p.threadId === threadId).sort((a, b) => b.publishedAt - a.publishedAt)[0]

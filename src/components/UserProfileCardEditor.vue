@@ -92,9 +92,6 @@ export default {
       type: Object
     }
   },
-  mounted () {
-
-  },
   data () {
     return {
       activeUser: { ...this.user }
@@ -109,14 +106,6 @@ export default {
     backToProfile () {
       this.$router.push({ name: 'Profile' })
     }
-  },
-  computed: {
-
   }
 }
 </script>
-
-<style scoped lang="css">
-.user-profile-card-editor {
-}
-</style>

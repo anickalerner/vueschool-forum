@@ -11,7 +11,7 @@
 </template>
 
 <script lang="js">
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ThreadEditor from '../components/ThreadEditor.vue'
 export default {
   name: 'thread-create',
@@ -34,15 +34,19 @@ export default {
     },
     backToForum () {
       this.$router.push({ name: 'Forum', params: { id: this.forumId } })
-    }
+    },
+    ...mapActions('fetchForum')
   },
   computed: {
     ...mapGetters({ forumById: 'forumById' }),
     forum () {
-      return this.forumById(this.forumId)
+      return this.forumById(this.forumId) || {}
     }
   },
-  components: { ThreadEditor }
+  components: { ThreadEditor },
+  created () {
+    this.fetchForum({ id: this.forumId })
+  }
 }
 </script>
 

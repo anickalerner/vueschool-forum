@@ -1,20 +1,23 @@
 <template lang="html">
-  <div class="col-full push-top">
-    <h1>{{ category.name }}</h1>
-  </div>
+  <div v-if="category">
+    <div class="col-full push-top">
+      <h1>{{ category.name }}</h1>
+    </div>
 
-  <div class="col-full">
-    <ForumList
-      :forums="forums"
-      :title="category.name"
-      :categoryId="category.id"
-    />
+    <div class="col-full">
+      <ForumList
+        :forums="forums"
+        :title="category.name || ''"
+        :categoryId="category.id || ''"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="js">
 import ForumList from '@/components/ForumList.vue'
-
+import { findById } from '@/helpers'
+import { mapActions } from 'vuex'
 export default {
   name: 'category-page',
   components: { ForumList },
@@ -24,24 +27,20 @@ export default {
       type: String
     }
   },
-  mounted () {
-
-  },
-  data () {
-    return {
-
-    }
-  },
   methods: {
-
+    ...mapActions(['fetchCategory', 'fetchForums'])
   },
   computed: {
     category () {
-      return this.$store.state.categories.find(c => c.id === this.id)
+      return findById(this.$store.state.categories, this.id) || {}
     },
     forums () {
       return this.$store.state.forums.filter(f => f.categoryId === this.id)
     }
+  },
+  async created () {
+    const category = await this.fetchCategory({ id: this.id })
+    await this.fetchForums({ ids: category.forums })
   }
 }
 </script>

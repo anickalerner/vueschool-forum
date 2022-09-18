@@ -1,5 +1,5 @@
 <template lang="html">
-  <div>
+  <div v-if="post">
     <img class="avatar-medium" :src="user.avatar" alt="" />
 
     <div>
@@ -12,6 +12,7 @@
 </template>
 
 <script lang="js">
+import { findById } from '@/helpers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
@@ -19,13 +20,6 @@ dayjs.extend(relativeTime)
 export default {
   name: 'last-post-info',
   props: ['post'],
-  mounted () {
-
-  },
-  data () {
-    return {
-    }
-  },
   methods: {
     timeFrom (timestamp) {
       return dayjs.unix(timestamp).fromNow()
@@ -33,7 +27,7 @@ export default {
   },
   computed: {
     user () {
-      return this.users.find(u => u.id === this.post.userId)
+      return findById(this.users, this.post.userId)
     },
     users () {
       return this.$store.state.users
