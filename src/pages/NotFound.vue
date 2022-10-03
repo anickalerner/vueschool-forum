@@ -8,6 +8,9 @@
 <script lang="js">
 
 export default {
-  name: 'not-found'
+  name: 'not-found',
+  created () {
+    this.$emit('ready')
+  }
 }
 </script>

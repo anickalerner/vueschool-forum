@@ -1,5 +1,5 @@
 <template lang="html">
-  <div v-if="category">
+  <div v-if="asyncDataStatus_ready">
     <div class="col-full push-top">
       <h1>{{ category.name }}</h1>
     </div>
@@ -18,9 +18,12 @@
 import ForumList from '@/components/ForumList.vue'
 import { findById } from '@/helpers'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus.js'
+
 export default {
   name: 'category-page',
   components: { ForumList },
+  mixins: [asyncDataStatus],
   props: {
     id: {
       required: true,
@@ -41,6 +44,7 @@ export default {
   async created () {
     const category = await this.fetchCategory({ id: this.id })
     await this.fetchForums({ ids: category.forums })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>

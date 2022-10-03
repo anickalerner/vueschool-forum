@@ -9,6 +9,7 @@ import Forum from '@/pages/Forum'
 import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
 import sourceData from '@/data.json'
+import store from '@/store'
 
 const routes = [
   {
@@ -103,5 +104,7 @@ const router = createRouter({
     })
   }
 })
-
+router.beforeEach(() => {
+  store.dispatch('unsubscribeAllSnapshots')
+})
 export default router

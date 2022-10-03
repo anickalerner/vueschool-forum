@@ -11,3 +11,8 @@ export const upsert = (resource, item) => {
     resource.push(item)
   }
 }
+
+export function docToResource (doc) {
+  if (typeof doc?.data !== 'function') return doc
+  return { ...doc.data(), id: doc.id }
+}

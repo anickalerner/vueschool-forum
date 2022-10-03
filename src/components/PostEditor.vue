@@ -3,7 +3,7 @@
     <form @submit.prevent="save">
       <div class="form-group">
         <textarea
-          v-model="text"
+          v-model="postCopy.text"
           name=""
           id=""
           cols="30"
@@ -12,7 +12,7 @@
         />
       </div>
       <div class="form-actions">
-        <button class="btn-blue">Submit post</button>
+        <button class="btn-blue">{{ buttonText }}</button>
       </div>
     </form>
   </div>
@@ -22,18 +22,26 @@
 
 export default {
   name: 'post-editor',
+  props: {
+    post: {
+      type: Object,
+      default: () => ({ text: '' })
+    }
+  },
   data () {
     return {
-      text: ''
+      postCopy: { ...this.post }
     }
   },
   methods: {
     save () {
-      const post = {
-        text: this.text
-      }
-      this.$emit('save', { post })
-      this.text = ''
+      this.$emit('save', { post: this.postCopy })
+      this.postCopy.text = ''
+    }
+  },
+  computed: {
+    buttonText () {
+      return this.post.id === '' ? 'Submit post' : 'Update post'
     }
   }
 }

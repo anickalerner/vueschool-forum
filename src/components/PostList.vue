@@ -1,22 +1,27 @@
 <template lang="html">
   <div class="post-list">
-    <div class="post" v-for="post in posts" :key="post.id">
+    <div class="post" v-for="post in posts" :key="post.id" :data-id="post.id">
       <user-info-post :user="userById(post.userId)" />
       <div class="post-content">
-        <div>
+        <PostEditor v-if="editing === post.id" :post="post" @save="editPost" />
+        <div v-else>
           <p>
             {{ post.text }}
           </p>
         </div>
         <a
+          v-if="post.userId === $store.state.authId"
+          @click.prevent="toggleEditMode(post.id)"
           href="#"
-          style="margin-left: auto"
+          style="margin-inline-start: auto; padding-start: 1em"
           class="link-unstyled"
           title="Make a change"
-          ><i class="fa fa-pencil"></i
-        ></a>
+        >
+          <fa-icon icon="fa-solid fa-pencil"
+        /></a>
       </div>
       <div class="post-date text-faded">
+        <div v-if="post.edited" class="edition-info">edited</div>
         <app-date :timestamp="post.publishedAt" />
       </div>
 
@@ -42,7 +47,8 @@
 
 <script lang="js">
 import UserInfoPost from '@/components/UserInfoPost.vue'
-import { mapGetters } from 'vuex'
+import PostEditor from '@/components/PostEditor.vue'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'post-list',
   props: {
@@ -51,10 +57,23 @@ export default {
       type: Array
     }
   },
-  components: { UserInfoPost },
+  data () {
+    return {
+      editing: null
+    }
+  },
+  components: { UserInfoPost, PostEditor },
   methods: {
+    ...mapActions(['updatePost']),
     userById (userId) {
       return this.user(userId)
+    },
+    toggleEditMode (id) {
+      this.editing = this.editing === id ? null : id
+    },
+    editPost ({ post }) {
+      this.updatePost(post)
+      this.toggleEditMode(post.id)
     }
   },
   computed: {

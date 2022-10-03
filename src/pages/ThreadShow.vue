@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="col-large push-top" v-if="thread">
+  <div class="col-large push-top" v-if="asyncDataStatus_ready">
     <h1>
       {{ thread.title }}
       <router-link
@@ -29,9 +29,12 @@ import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
 import { findById } from '@/helpers'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus.js'
+
 export default {
   name: 'page-thread-show',
   components: { PostList, PostEditor },
+  mixins: [asyncDataStatus],
   props: {
     id: {
       required: true,
@@ -47,9 +50,9 @@ export default {
         ...eventData.post,
         threadId: this.id
       }
-      this.$store.dispatch('createPost', post)
+      this.createPost(post)
     },
-    ...mapActions(['fetchThread', 'fetchUser', 'fetchPosts', 'fetchUsers'])
+    ...mapActions(['createPost', 'fetchThread', 'fetchPosts', 'fetchUsers'])
   },
   computed: {
     posts () {
@@ -67,12 +70,10 @@ export default {
   },
   async created () {
     const thread = await this.fetchThread({ id: this.id })
-    // fetch the user
-    await this.fetchUser({ id: thread.userId })
-    // fetch the posts
     const posts = await this.fetchPosts({ ids: thread.posts })
-    const users = posts.map(post => post.userId)
-    this.fetchUsers({ ids: users })
+    const users = posts.map(post => post.userId).concat(thread.userId)
+    await this.fetchUsers({ ids: users })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>

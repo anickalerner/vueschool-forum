@@ -1,6 +1,6 @@
 <template>
-  <span :title="humanFriendlyDate(timestamp)">
-    {{ timeFrom(timestamp) }}
+  <span :title="humanFriendlyDate">
+    {{ timeFrom }}
   </span>
 </template>
 
@@ -16,15 +16,18 @@ export default {
   props: {
     timestamp: {
       required: true,
-      type: Number
+      type: [Number, Object]
     }
   },
-  methods: {
-    timeFrom (timestamp) {
-      return dayjs.unix(timestamp).fromNow()
+  computed: {
+    normalizedTimestamp () {
+      return this.timestamp?.seconds || this.timestamp
     },
-    humanFriendlyDate (timestamp) {
-      return dayjs.unix(timestamp).format('llll')
+    timeFrom () {
+      return dayjs.unix(this.normalizedTimestamp).fromNow()
+    },
+    humanFriendlyDate () {
+      return dayjs.unix(this.normalizedTimestamp).format('llll')
     }
 
   }

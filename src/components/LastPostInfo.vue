@@ -6,7 +6,9 @@
       <p class="text-xsmall">
         <a href="profile.html">{{ user.name }}</a>
       </p>
-      <p class="text-xsmall text-faded">{{ timeFrom(post.publishedAt) }}</p>
+      <p class="text-xsmall text-faded">
+        <app-date :timestamp="post.publishedAt" />
+      </p>
     </div>
   </div>
 </template>
@@ -20,11 +22,6 @@ dayjs.extend(relativeTime)
 export default {
   name: 'last-post-info',
   props: ['post'],
-  methods: {
-    timeFrom (timestamp) {
-      return dayjs.unix(timestamp).fromNow()
-    }
-  },
   computed: {
     user () {
       return findById(this.users, this.post.userId)
