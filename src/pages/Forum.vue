@@ -14,9 +14,9 @@
         >Start a thread</router-link
       >
     </div>
-  </div>
-  <div class="col-full push-top">
-    <ThreadList :threads="threads" />
+    <div class="col-full push-top">
+      <ThreadList :threads="threads" />
+    </div>
   </div>
 </template>
 
@@ -49,12 +49,10 @@ export default {
     }
   },
   async created () {
-    console.log('ready:', this.asyncDataStatus_ready)
     const forum = await this.fetchForum({ id: this.id })
     const threads = await this.fetchThreads({ ids: forum.threads })
     await this.fetchUsers({ ids: threads.map(thread => thread.userId) })
     this.asyncDataStatus_fetched()
-    console.log('ready:', this.asyncDataStatus_ready)
   }
 
 }

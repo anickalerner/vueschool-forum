@@ -1,13 +1,4 @@
 <template lang="html">
-  <h2 class="list-title">
-    <router-link
-      v-if="categoryId"
-      :to="{ name: 'Category', params: { id: categoryId } }"
-    >
-      {{ title }}</router-link
-    >
-    <span v-else>{{ title }}</span>
-  </h2>
   <div class="forum-list">
     <div class="forum-listing" v-for="forum in forums" :key="forum.id">
       <div class="forum-details">
@@ -22,28 +13,17 @@
       <div class="threads-count">
         <p>
           <span class="count">{{ forum.threads?.length }}</span>
-          {{ getThreadsWord(forum) }}
         </p>
       </div>
 
-      <div class="last-thread">
-        <img
-          class="avatar"
-          src="https://pbs.twimg.com/profile_images/719242842598699008/Nu43rQz1_400x400.jpg"
-          alt=""
-        />
-        <div class="last-thread-details">
-          <a href="thread.html">Post Reactions</a>
-          <p class="text-xsmall">
-            By <a href="profile.html">Rolf Haug</a>, a month ago
-          </p>
-        </div>
-      </div>
+      <last-thread :forum="forum" />
     </div>
   </div>
 </template>
 
 <script lang="js">
+import LastThread from './LastThread.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'forum-list',
@@ -53,15 +33,11 @@ export default {
       type: Array
     },
     title: {
-      required: true,
-      type: String
-    },
-    categoryId: {
-      required: false,
       type: String
     }
   },
   methods: {
+    ...mapActions(['fetchThreads', 'fetchUser']),
     getThreadsPerForum (forum) {
       return forum.threads ? forum.threads.length : 0
     },
@@ -74,18 +50,18 @@ export default {
     },
     getThreadsWord (forum) {
       let word = 'thread'
-      if (forum.threads?.length) {
-        word += forum.threads.length > 1 ? 's' : ''
+      const threadsCount = this.getThreadsPerForum(forum)
+      if (threadsCount) {
+        word += threadsCount > 1 ? 's' : ''
       } else {
         word = 'no ' + word + 's'
       }
       return word
+    },
+    async getLastThread (forumId) {
+      return this.lastThreads.find(t => t?.forumId === forumId)
     }
-  }
+  },
+  components: { LastThread }
 }
 </script>
-
-<style scoped lang="css">
-.forum-list {
-}
-</style>

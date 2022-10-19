@@ -7,6 +7,8 @@
       :text="text"
       @cancel="backToThread"
       @save="save"
+      @dirty="formIsDirty = true"
+      @clean="formIsDirty = false"
     />
   </div>
 </template>
@@ -28,7 +30,7 @@ export default {
   mixins: [asyncDataStatus],
   data () {
     return {
-
+      formIsDirty: false
     }
   },
   methods: {
@@ -62,6 +64,13 @@ export default {
     const thread = await this.fetchThread({ id: this.id })
     await this.fetchPost({ id: thread.posts[0] })
     this.asyncDataStatus_fetched()
+  },
+  beforeRouteLeave () {
+    if (this.formIsDirty) {
+      const confirmed = window.confirm('Are you sure you want to leave? Unsaved changes will be lost')
+      console.log('confirmed', confirmed)
+      if (!confirmed) return false
+    }
   }
 
 }

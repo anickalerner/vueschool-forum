@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { findById } from '@/helpers'
 import Home from '@/pages/Home'
 import ThreadShow from '@/pages/ThreadShow'
 import ThreadCreate from '@/pages/ThreadCreate'
@@ -7,8 +6,9 @@ import ThreadEdit from '@/pages/ThreadEdit'
 import Category from '@/pages/Category'
 import Forum from '@/pages/Forum'
 import Profile from '@/pages/Profile'
+import Register from '@/pages/Register'
+import SignIn from '@/pages/SignIn'
 import NotFound from '@/pages/NotFound'
-import sourceData from '@/data.json'
 import store from '@/store'
 
 const routes = [
@@ -23,7 +23,7 @@ const routes = [
     component: Category,
     props: true,
     beforeEnter (to, from, next) {
-      checkItemPath(to, next, sourceData.categories)
+      checkItemPath(to, next, 'fetchCategories')
     }
   },
   {
@@ -32,53 +32,76 @@ const routes = [
     component: Forum,
     props: true,
     beforeEnter (to, from, next) {
-      checkItemPath(to, next, sourceData.forums)
+      checkItemPath(to, next, 'fetchForum')
     }
   },
   {
     path: '/thread/:id',
     name: 'ThreadShow',
     component: ThreadShow,
-    props: true
-    // ,
-    // beforeEnter (to, from, next) {
-    //   checkItemPath(to, next, sourceData.threads)
-    // }
+    props: true,
+    beforeEnter (to, from, next) {
+      checkItemPath(to, next, 'fetchThread')
+    }
   },
   {
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
     component: ThreadEdit,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/me/edit',
     name: 'ProfileEdit',
     component: Profile,
-    props: { edit: true }
+    props: { edit: true },
+    meta: { requiresAuth: true }
   },
   {
     path: '/me',
     name: 'Profile',
     component: Profile,
-    meta: { toTop: true, smooth: true }
+    meta: { toTop: true, smooth: true, requiresAuth: true }
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: { requiresGuest: true }
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: SignIn,
+    meta: { requiresGuest: true }
+  },
+  {
+    path: '/signout',
+    name: 'SignOut',
+    async beforeEnter () {
+      await store.dispatch('signOut')
+      return { name: 'Home' }
+    }
   }
 ]
 
-function checkItemPath (to, next, collection) {
-  const itemExists = findById(collection, to.params.id)
-  if (itemExists) {
+async function checkItemPath (to, next, action) {
+  const actionParam = to.params?.id ? { id: to.params.id } : {}
+  const result = await store.dispatch(action, actionParam)
+  if (result) {
     return next()
   } else {
     next({
@@ -93,7 +116,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior (to) {
-    // return scroll
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const scroll = {}
@@ -104,7 +126,23 @@ const router = createRouter({
     })
   }
 })
-router.beforeEach(() => {
+router.beforeEach(async (to, from) => {
+  await store.dispatch('initAuthentication')
+  console.log(`🚦 navigating to ${to.name} from ${from.name}`)
   store.dispatch('unsubscribeAllSnapshots')
+  if (to.meta.requiresAuth && !store.state.authId) {
+    return { name: 'SignIn', query: { redirectTo: to.path } }
+  }
+  if (
+    ['SignIn', 'Register'].includes(to.name) &&
+    typeof from.query?.redirectTo !== 'undefined' &&
+    typeof to.query?.redirectTo === 'undefined'
+  ) {
+    debugger
+    return { ...to, query: { redirectTo: from.query.redirectTo } }
+  }
+  if (to.meta.requiresGuest && store.state.authId) {
+    return { name: 'Home' }
+  }
 })
 export default router

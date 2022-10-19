@@ -4,16 +4,12 @@
     v-for="category in categories"
     :key="'category' + category.id"
   >
-    <forum-list
-      :forums="getForums(category.id)"
-      :title="category.name"
-      :categoryId="category.id"
-    />
+    <CategoryListItem :category="category" />
   </div>
 </template>
 
 <script lang="js">
-import ForumList from './ForumList.vue'
+import CategoryListItem from './CategoryListItem.vue'
 
 export default {
   name: 'category-list',
@@ -23,16 +19,7 @@ export default {
       type: Array
     }
   },
-  methods: {
-    getForums (categoryId) {
-      return this.$store.state.forums.filter(f => f.categoryId === categoryId)
-    }
-  },
-  components: { ForumList }
+  components: { CategoryListItem }
+
 }
 </script>
-
-<style scoped lang="css">
-.forum-list {
-}
-</style>

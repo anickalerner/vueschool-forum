@@ -44,7 +44,10 @@ export default {
   forumById: (state) => (forumId) => {
     return findById(state.forums, forumId)
   },
-  titleToSlug: (state) => (title) => {
+  threadsByUser: (state) => (id) => {
+    return state.threads.filter((thread) => thread.userId === id)
+  },
+  titleToSlug: () => (title) => {
     return title.split(' ').join('-')
   }
 }

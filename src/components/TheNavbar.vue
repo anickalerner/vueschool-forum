@@ -15,33 +15,42 @@
     <nav class="navbar">
       <ul>
         <li v-if="authUser" class="navbar-user">
-          <router-link :to="{ name: 'Profile' }">
+          <a @click.prevent="userDropdownOpen = !userDropdownOpen">
             <img
+              v-if="!!authUser.avatar"
               class="avatar-small"
               :src="authUser.avatar"
-              :alt="'{{ authUser.name}} profile picture'"
+              :alt="`{{ authUser.name}} profile picture`"
             />
             <span>
               {{ authUser.name }}
               <img
                 class="icon-profile"
-                src="assets/img/svg/arrow-profile.svg"
+                src="../assets/img/svg/arrow-profile.svg"
                 alt=""
               />
             </span>
-          </router-link>
+          </a>
 
           <!-- dropdown menu -->
           <!-- add class "active-drop" to show the dropdown -->
-          <div id="user-dropdown">
+          <div id="user-dropdown" :class="{ 'active-drop': userDropdownOpen }">
             <div class="triangle-drop"></div>
             <ul class="dropdown-menu">
+              <router-link :to="{ name: 'Profile' }" class="dropdown-menu-item">
+                View profile
+              </router-link>
               <li class="dropdown-menu-item">
-                <a href="profile.html">View profile</a>
+                <a @click.prevent="$store.dispatch('signOut')">Sign out</a>
               </li>
-              <li class="dropdown-menu-item"><a href="#">Log out</a></li>
             </ul>
           </div>
+        </li>
+        <li v-if="!authUser" class="navbar-item">
+          <router-link :to="{ name: 'SignIn' }">Sign in</router-link>
+        </li>
+        <li v-if="!authUser" class="navbar-item">
+          <router-link :to="{ name: 'Register' }">Register</router-link>
         </li>
       </ul>
 
@@ -74,6 +83,11 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'the-navbar',
+  data () {
+    return {
+      userDropdownOpen: false
+    }
+  },
   computed: {
     ...mapGetters(['authUser'])
   }

@@ -1,7 +1,8 @@
 <template lang="html">
   <div v-if="asyncDataStatus_ready" class="container">
     <h1 class="col-full push-top">Welcome to the Forum</h1>
-    <category-list :categories="categories" />
+    {{ categories.length }}
+    <category-list v-if="categories.length > 0" :categories="categories" />
   </div>
 </template>
 
@@ -23,9 +24,9 @@ export default {
   },
   async created () {
     const categories = await this.fetchCategories()
-    categories.forEach(async category =>
+    categories.forEach(async category => {
       await this.fetchForums({ ids: category.forums })
-    )
+    })
     this.asyncDataStatus_fetched()
   }
 }

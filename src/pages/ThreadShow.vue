@@ -3,6 +3,7 @@
     <h1>
       {{ thread.title }}
       <router-link
+        v-if="isOwnThread"
         :to="{ name: 'ThreadEdit', id: this.id }"
         class="btn-small btn-green"
       >
@@ -20,7 +21,18 @@
       >
     </p>
     <post-list :posts="threadPosts" />
-    <post-editor @save="addPost" />
+    <post-editor v-if="authUser" @save="addPost" />
+    <div v-else class="text-center" style="margin-bottom: 50px">
+      <router-link :to="{ name: 'SignIn', query: { redirectTo: $router.path } }"
+        >Sign in</router-link
+      >
+      or
+      <router-link
+        :to="{ name: 'Register', query: { redirectTo: $router.path } }"
+        >Register</router-link
+      >
+      to reply
+    </div>
   </div>
 </template>
 
@@ -28,7 +40,7 @@
 import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
 import { findById } from '@/helpers'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus.js'
 
 export default {
@@ -55,6 +67,7 @@ export default {
     ...mapActions(['createPost', 'fetchThread', 'fetchPosts', 'fetchUsers'])
   },
   computed: {
+    ...mapGetters(['authUser']),
     posts () {
       return this.$store.state.posts
     },
@@ -66,6 +79,9 @@ export default {
     },
     threadPosts () {
       return this.posts.filter(p => p.threadId === this.id)
+    },
+    isOwnThread () {
+      return this.thread.userId === this.authUser?.id
     }
   },
   async created () {

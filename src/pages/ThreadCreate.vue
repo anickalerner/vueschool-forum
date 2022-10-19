@@ -6,7 +6,12 @@
         {{ forum.name }}
       </i>
     </h1>
-    <ThreadEditor @cancel="backToForum" @save="save" />
+    <ThreadEditor
+      @save="save"
+      @cancel="cancel"
+      @dirty="formIsDirty = true"
+      @clean="formIsDirty = false"
+    />
   </div>
 </template>
 
@@ -23,6 +28,11 @@ export default {
       type: String
     }
   },
+  data () {
+    return {
+      formIsDirty: false
+    }
+  },
   components: { ThreadEditor },
   mixins: [asyncDataStatus],
   methods: {
@@ -31,7 +41,7 @@ export default {
       const thread = await this.$store.dispatch('createThread', { title, text, forumId: this.forumId })
       this.$router.push({ name: 'ThreadShow', params: { id: thread.id } })
     },
-    backToForum () {
+    cancel () {
       this.$router.push({ name: 'Forum', params: { id: this.forumId } })
     },
     ...mapActions(['fetchForum', 'createThread'])
@@ -43,8 +53,14 @@ export default {
     }
   },
   async created () {
-    await this.$store.dispatch('fetchForum', { id: this.forumId })
+    await this.fetchForum({ id: this.forumId })
     this.asyncDataStatus_fetched()
+  },
+  beforeRouteLeave () {
+    if (this.formIsDirty) {
+      const confirmed = window.confirm('Are you sure you want to leave? Unsaved changes will be lost')
+      if (!confirmed) return false
+    }
   }
 }
 </script>
