@@ -59,17 +59,17 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/me',
+    name: 'Profile',
+    component: Profile,
+    meta: { toTop: true, smooth: true, requiresAuth: true }
+  },
+  {
     path: '/me/edit',
     name: 'ProfileEdit',
     component: Profile,
     props: { edit: true },
     meta: { requiresAuth: true }
-  },
-  {
-    path: '/me',
-    name: 'Profile',
-    component: Profile,
-    meta: { toTop: true, smooth: true, requiresAuth: true }
   },
   {
     path: '/:pathMatch(.*)*',

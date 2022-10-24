@@ -48,8 +48,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="css">
-.category {
-}
-</style>

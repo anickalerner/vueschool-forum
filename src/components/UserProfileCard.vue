@@ -31,6 +31,7 @@
     Member since
     <app-date :timestamp="user.registeredAt" />
     , last visited 4 hours ago
+    <!-- <AppDate :timestamp="user.lastVisitAt" /> -->
   </p>
 
   <div class="text-center">
@@ -57,8 +58,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="css">
-.user-profile-card {
-}
-</style>
