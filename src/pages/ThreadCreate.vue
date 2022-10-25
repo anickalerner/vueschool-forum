@@ -38,16 +38,16 @@ export default {
   methods: {
     async save ({ title, text }) {
       // dispatch save action
-      const thread = await this.$store.dispatch('createThread', { title, text, forumId: this.forumId })
+      const thread = await this.$store.dispatch('threads/createThread', { title, text, forumId: this.forumId })
       this.$router.push({ name: 'ThreadShow', params: { id: thread.id } })
     },
     cancel () {
       this.$router.push({ name: 'Forum', params: { id: this.forumId } })
     },
-    ...mapActions(['fetchForum', 'createThread'])
+    ...mapActions({ fetchForum: 'forums/fetchForum', createThread: 'threads/createThread' })
   },
   computed: {
-    ...mapGetters({ forumById: 'forumById' }),
+    ...mapGetters({ forumById: 'forums/forumById' }),
     forum () {
       return this.forumById(this.forumId) || {}
     }

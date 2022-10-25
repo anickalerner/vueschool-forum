@@ -37,11 +37,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['threadsByUser'])
+    ...mapGetters({ threadsByUser: 'threads/threadsByUser' })
   },
   async created () {
     const threads = this.posts.map(p => p.threadId)
-    await this.$store.dispatch('fetchThreads', { ids: threads })
+    await this.$store.dispatch('threads/fetchThreads', { ids: threads })
     const userThreads = this.threadsByUser(this.posts[0].userId)
     const firstPostsId = userThreads.map(t => t.posts[0])
     this.postsList = this.posts.map(post => {

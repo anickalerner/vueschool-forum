@@ -4,9 +4,9 @@ import {
   makeAppendChildToParentMutation,
   docToResource
 } from '@/helpers'
-import firebase from '@/config/firebase'
+import firebase from 'firebase'
 export default {
-  namespace: true,
+  namespaced: true,
   state: {
     items: []
   },
@@ -78,10 +78,10 @@ export default {
       )
     },
     fetchUser: ({ dispatch }, { id }) =>
-      dispatch('fetchItem', { resource: 'users', id }, { root: true })
-  },
-  fetchUsers ({ dispatch }, { ids }) {
-    return dispatch('fetchItems', { resource: 'users', ids }, { root: true })
+      dispatch('fetchItem', { resource: 'users', id }, { root: true }),
+    fetchUsers ({ dispatch }, { ids }) {
+      return dispatch('fetchItems', { resource: 'users', ids }, { root: true })
+    }
   },
 
   mutations: {

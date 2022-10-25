@@ -48,16 +48,16 @@ export default {
   computed: {
     users () {
       if (!this.thread) return []
-      return this.$store.state.users
+      return this.$store.state.users.items
     },
     posts () {
       if (!this.thread) return []
-      return this.$store.state.posts
+      return this.$store.state.posts.items
     }
   },
   async created () {
-    await this.$store.dispatch('fetchUsers', { ids: this.thread.contributors })
-    await this.$store.dispatch('fetchPosts', { ids: this.thread.posts })
+    await this.$store.dispatch('users/fetchUsers', { ids: this.thread.contributors })
+    await this.$store.dispatch('posts/fetchPosts', { ids: this.thread.posts })
   }
 }
 </script>

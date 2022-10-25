@@ -37,9 +37,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchThreads', 'fetchUser']),
+    ...mapActions(['threads/fetchThreads', 'users/fetchUser']),
     getThreadsPerForum (forum) {
-      return forum.threads ? forum.threads.length : 0
+      return forum.threads.items ? forum.threads.items.length : 0
     },
     getThreadCount (forum) {
       const threads = this.getThreadsPerForum(forum)

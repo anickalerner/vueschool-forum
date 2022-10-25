@@ -1,7 +1,7 @@
 import { findById, makeAppendChildToParentMutation } from '@/helpers'
 
 export default {
-  namespace: true,
+  namespaced: true,
   state: {
     items: []
   },

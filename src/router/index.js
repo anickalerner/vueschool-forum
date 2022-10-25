@@ -23,7 +23,7 @@ const routes = [
     component: Category,
     props: true,
     beforeEnter (to, from, next) {
-      checkItemPath(to, next, 'fetchCategories')
+      checkItemPath(to, next, 'categories/fetchCategories')
     }
   },
   {
@@ -32,7 +32,7 @@ const routes = [
     component: Forum,
     props: true,
     beforeEnter (to, from, next) {
-      checkItemPath(to, next, 'fetchForum')
+      checkItemPath(to, next, 'forums/fetchForum')
     }
   },
   {
@@ -41,7 +41,7 @@ const routes = [
     component: ThreadShow,
     props: true,
     beforeEnter (to, from, next) {
-      checkItemPath(to, next, 'fetchThread')
+      checkItemPath(to, next, 'threads/fetchThread')
     }
   },
   {
@@ -92,7 +92,7 @@ const routes = [
     path: '/signout',
     name: 'SignOut',
     async beforeEnter () {
-      await store.dispatch('signOut')
+      await store.dispatch('auth/signOut')
       return { name: 'Home' }
     }
   }
@@ -127,10 +127,10 @@ const router = createRouter({
   }
 })
 router.beforeEach(async (to, from) => {
-  await store.dispatch('initAuthentication')
+  await store.dispatch('auth/initAuthentication')
   console.log(`🚦 navigating to ${to.name} from ${from.name}`)
   store.dispatch('unsubscribeAllSnapshots')
-  if (to.meta.requiresAuth && !store.state.authId) {
+  if (to.meta.requiresAuth && !store.state.auth.authId) {
     return { name: 'SignIn', query: { redirectTo: to.path } }
   }
   if (
@@ -141,7 +141,7 @@ router.beforeEach(async (to, from) => {
     debugger
     return { ...to, query: { redirectTo: from.query.redirectTo } }
   }
-  if (to.meta.requiresGuest && store.state.authId) {
+  if (to.meta.requiresGuest && store.state.auth.authId) {
     return { name: 'Home' }
   }
 })

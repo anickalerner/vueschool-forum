@@ -55,7 +55,7 @@ export default {
 
   },
   computed: {
-    ...mapGetters(['user']),
+    ...mapGetters({ user: 'users/user' }),
     subTitleText () {
       if (this.post.isFirstPost) {
         return this.userName + ' started a topic in ' + this.forumName
@@ -65,10 +65,10 @@ export default {
     }
   },
   async created () {
-    this.postAuthor = await this.$store.dispatch('fetchUser', { id: this.post.userId })
+    this.postAuthor = await this.$store.dispatch('users/fetchUser', { id: this.post.userId })
     this.thread = this.post.thread
-    this.threadAuthor = await this.$store.dispatch('fetchUser', { id: this.thread.userId })
-    const forum = await this.$store.dispatch('fetchForum', { id: this.thread.forumId })
+    this.threadAuthor = await this.$store.dispatch('users/fetchUser', { id: this.thread.userId })
+    const forum = await this.$store.dispatch('forums/fetchForum', { id: this.thread.forumId })
     this.forumName = forum?.name
     this.asyncDataStatus_fetched()
   }

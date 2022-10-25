@@ -27,7 +27,7 @@ export default {
       return findById(this.users, this.post.userId)
     },
     users () {
-      return this.$store.state.users
+      return this.$store.state.users.items
     }
   }
 }

@@ -63,14 +63,14 @@ export default {
   methods: {
     async signin () {
       try {
-        await this.$store.dispatch('signInWithEmailAndPassword', { ...this.form })
+        await this.$store.dispatch('auth/signInWithEmailAndPassword', { ...this.form })
         this.successRedirect()
       } catch (error) {
         alert(error)
       }
     },
     async signInWithGoogle () {
-      await this.$store.dispatch('signInWithGoogle', { ...this.form })
+      await this.$store.dispatch('auth/signInWithGoogle', { ...this.form })
       this.successRedirect()
     }
   },

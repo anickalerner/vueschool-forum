@@ -23,7 +23,7 @@
 <script lang="js">
 import ThreadList from '@/components/ThreadList.vue'
 import { findById } from '@/helpers'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus.js'
 
 export default {
@@ -37,15 +37,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchForum', 'fetchThreads', 'fetchUsers'])
+    ...mapActions({ fetchForum: 'forums/fetchForum', fetchThreads: 'threads/fetchThreads', fetchUsers: 'users/fetchUsers' })
   },
   computed: {
+    ...mapGetters({ threadById: 'threads/threadById' }),
     forum () {
-      return findById(this.$store.state.forums, this.id)
+      return findById(this.$store.state.forums.items, this.id)
     },
     threads () {
       if (!this.forum) return []
-      return this.forum.threads.map(threadId => this.$store.getters.threadById(threadId))
+      return this.forum.threads.map(threadId => this.threadById(threadId))
     }
   },
   async created () {

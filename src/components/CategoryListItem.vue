@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     forums (categoryId) {
-      return this.$store.state.forums.filter(f => f.categoryId === categoryId)
+      return this.$store.state.forums.items.filter(f => f.categoryId === categoryId)
     }
   },
   components: { ForumList }

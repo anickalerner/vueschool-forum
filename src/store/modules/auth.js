@@ -1,8 +1,9 @@
 import { userFBRef } from '../helpers'
-import firebase from '@/config/firebase'
+import firebase from 'firebase'
 import router from '@/router'
 
 export default {
+  namespaced: true,
   state: {
     authId: null,
     authUserUnsubscribe: null,
@@ -10,7 +11,7 @@ export default {
   },
   getters: {
     authUser: (state, getters, rootState, rootGetters) => {
-      return rootGetters.user['users/user'](state.authId)
+      return rootGetters['users/user'](state.authId)
     }
   },
   actions: {

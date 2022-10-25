@@ -31,14 +31,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchCategory', 'fetchForums'])
+    ...mapActions({ fetchCategory: 'categories/fetchCategory', fetchForums: 'forums/fetchForums' })
   },
   computed: {
     category () {
-      return findById(this.$store.state.categories, this.id) || {}
+      return findById(this.$store.state.categories.items, this.id) || {}
     },
     forums () {
-      return this.$store.state.forums.filter(f => f.categoryId === this.id)
+      return this.$store.state.forums.items.filter(f => f.categoryId === this.id)
     }
   },
   async created () {

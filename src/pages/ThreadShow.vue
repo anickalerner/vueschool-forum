@@ -64,18 +64,18 @@ export default {
       }
       this.createPost(post)
     },
-    ...mapActions(['createPost', 'fetchThread', 'fetchPosts', 'fetchUsers'])
+    ...mapActions({ createPost: 'posts/createPost', fetchThread: 'threads/fetchThread', fetchPosts: 'posts/fetchPosts', fetchUsers: 'users/fetchUsers' })
   },
   computed: {
-    ...mapGetters(['authUser']),
+    ...mapGetters({ authUser: 'auth/authUser', threadById: 'threads/threadById' }),
     posts () {
-      return this.$store.state.posts
+      return this.$store.state.posts.items
     },
     users () {
-      return this.$store.state.users
+      return this.$store.state.users.items
     },
     thread () {
-      return this.$store.getters.threadById(this.id)
+      return this.threadById(this.id)
     },
     threadPosts () {
       return this.posts.filter(p => p.threadId === this.id)

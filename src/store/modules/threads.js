@@ -13,7 +13,7 @@ import {
   forumFBRef
 } from '../helpers'
 export default {
-  namespace: true,
+  namespaced: true,
   state: {
     items: []
   },
@@ -42,9 +42,10 @@ export default {
     }
   },
   actions: {
-    async createThread ({ commit, state, dispatch }, { title, text, forumId }) {
+    async createThread ({ commit, state, dispatch, rootState }, { title, text, forumId }) {
       const createdTimeStamp = firebase.firestore.FieldValue.serverTimestamp()
-      const slug = this.getters.titleToSlug(title)
+      console.log('create thread this:', this)
+      const slug = this.getters['threads/titleToSlug'](title)
       const threadRef = threadsFBRef()
       const thread = {
         forumId,
@@ -52,7 +53,7 @@ export default {
         publishedAt: createdTimeStamp,
         slug,
         title,
-        userId: state.authId,
+        userId: rootState.auth.authId,
         posts: []
       }
       const userRef = userFBRef(thread.userId)
@@ -92,7 +93,7 @@ export default {
       commit(
         'users/appendThreadToUser',
         {
-          parentId: state.authId,
+          parentId: rootState.auth.authId,
           childId: threadRef.id
         },
         { root: true }

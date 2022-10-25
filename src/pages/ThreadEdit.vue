@@ -36,21 +36,21 @@ export default {
   methods: {
     async save ({ title, text }) {
       // dispatch save action
-      await this.$store.dispatch('updateThread', { title, text, id: this.id })
+      await this.$store.dispatch('threads/updateThread', { title, text, id: this.id })
       this.backToThread()
     },
     backToThread () {
       this.$router.push({ name: 'ThreadShow', params: { id: this.id } })
     },
-    ...mapActions(['fetchThread', 'fetchPost'])
+    ...mapActions({ fetchThread: 'threads/fetchThread', fetchPost: 'posts/fetchPost' })
   },
   computed: {
     thread () {
-      return findById(this.$store.state.threads, this.id)
+      return findById(this.$store.state.threads.items, this.id)
     },
     firstPost () {
       if (!this.thread) return {}
-      return findById(this.$store.state.posts, this.thread.posts[0])
+      return findById(this.$store.state.posts.items, this.thread.posts[0])
     },
     title () {
       return this.thread ? this.thread.title : ''

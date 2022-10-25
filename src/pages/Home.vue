@@ -15,11 +15,12 @@ export default {
   components: { CategoryList },
   mixins: [asyncDataStatus],
   methods: {
-    ...mapActions(['fetchCategories', 'fetchForums'])
+    ...mapActions('categories', ['fetchCategories']),
+    ...mapActions('forums', ['fetchForums'])
   },
   computed: {
     categories () {
-      return this.$store.state.categories
+      return this.$store.state.categories.items
     }
   },
   async created () {

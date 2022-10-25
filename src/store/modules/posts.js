@@ -3,7 +3,7 @@ import { findById } from '@/helpers'
 import firebase from 'firebase'
 
 export default {
-  namespace: true,
+  namespaced: true,
   state: {
     items: []
   },

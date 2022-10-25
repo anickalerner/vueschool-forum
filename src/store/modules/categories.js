@@ -1,6 +1,6 @@
-import firebase from '@/config/firebase'
+import firebase from 'firebase'
 export default {
-  namespace: true,
+  namespaced: true,
   state: {
     items: []
   },

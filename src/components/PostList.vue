@@ -64,7 +64,7 @@ export default {
   },
   components: { UserInfoPost, PostEditor },
   methods: {
-    ...mapActions(['updatePost']),
+    ...mapActions({ updatePost: 'posts/updatePost' }),
     userById (userId) {
       return this.user(userId)
     },
@@ -77,7 +77,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters({ user: 'users/user' })
   }
 }
 </script>

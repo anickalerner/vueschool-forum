@@ -88,11 +88,11 @@ export default {
   },
   methods: {
     async register () {
-      await this.$store.dispatch('registerUserWithEmailAndPassword', this.form)
+      await this.$store.dispatch('auth/registerUserWithEmailAndPassword', this.form)
       this.successRedirect()
     },
     async signUpWithGoogle () {
-      await this.$store.dispatch('signUpWithGoogle')
+      await this.$store.dispatch('auth/signUpWithGoogle')
       this.successRedirect()
     }
 

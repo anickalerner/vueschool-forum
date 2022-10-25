@@ -46,7 +46,7 @@ export default {
   },
   components: { AppDate },
   methods: {
-    ...mapActions(['fetchThreads', 'fetchUser']),
+    ...mapActions({ fetchThreads: 'threads/fetchThreads', fetchUser: 'users/fetchUser' }),
     humanFriendlyDate (timestamp) {
       const normalizedTimestamp = timestamp?.seconds || timestamp
       return dayjs.unix(normalizedTimestamp).format('llll')

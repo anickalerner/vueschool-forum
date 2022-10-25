@@ -2,11 +2,12 @@ import { createStore } from 'vuex'
 import actions from '@/store/actions'
 import mutations from '@/store/mutations'
 import getters from '@/store/getters'
-import categories from './modules/categories'
-import forums from './modules/forums'
-import threads from './modules/threads'
-import posts from './modules/posts'
-import users from './modules/users'
+import categories from '@/store/modules/categories'
+import forums from '@/store/modules/forums'
+import threads from '@/store/modules/threads'
+import posts from '@/store/modules/posts'
+import users from '@/store/modules/users'
+import auth from '@/store/modules/auth'
 
 export default createStore({
   modules: {
@@ -14,14 +15,10 @@ export default createStore({
     forums,
     threads,
     posts,
-    users
+    users,
+    auth
   },
   state: {
-    categories: [],
-    forums: [],
-    threads: [],
-    posts: [],
-    users: [],
     unsubscribes: []
   },
   actions,
