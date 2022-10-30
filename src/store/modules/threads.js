@@ -12,6 +12,7 @@ import {
   userFBRef,
   forumFBRef
 } from '../helpers'
+import chunk from 'lodash/chunk'
 export default {
   namespaced: true,
   state: {
@@ -42,7 +43,10 @@ export default {
     }
   },
   actions: {
-    async createThread ({ commit, state, dispatch, rootState }, { title, text, forumId }) {
+    async createThread (
+      { commit, state, dispatch, rootState },
+      { title, text, forumId }
+    ) {
       const createdTimeStamp = firebase.firestore.FieldValue.serverTimestamp()
       console.log('create thread this:', this)
       const slug = this.getters['threads/titleToSlug'](title)
@@ -99,10 +103,15 @@ export default {
         },
         { root: true }
       )
-      const newPost = await dispatch('posts/createPost', firstPost, { root: true })
+      const newPost = await dispatch('posts/createPost', firstPost, {
+        root: true
+      })
       newThread.firstPostId = newPost.id
       const updateBatch = firebase.firestore().batch()
-      updateBatch.update(threadRef, { ...findById(state.items, newThread.id), firstPostId: newPost.id })
+      updateBatch.update(threadRef, {
+        ...findById(state.items, newThread.id),
+        firstPostId: newPost.id
+      })
       await updateBatch.commit()
       return newThread
     },
@@ -135,6 +144,12 @@ export default {
         { resource: 'threads', ids },
         { root: true }
       )
+    },
+    fetchThreadsByPage ({ dispatch, commit }, { ids, page, perPage = 10 }) {
+      commit('clearThreads')
+      const chunks = chunk(ids, perPage)
+      const limitedIds = chunks[page - 1]
+      return dispatch('fetchThreads', { ids: limitedIds })
     }
   },
   mutations: {
@@ -145,6 +160,9 @@ export default {
     appendContributorToThread: makeAppendChildToParentMutation({
       parent: 'threads',
       child: 'contributors'
-    })
+    }),
+    clearThreads (state) {
+      state.items = []
+    }
   }
 }

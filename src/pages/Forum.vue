@@ -16,6 +16,13 @@
     </div>
     <div class="col-full push-top">
       <ThreadList :threads="threads" />
+      <v-pagination
+        v-model="page"
+        :pages="totalPages"
+        :range-size="1"
+        active-color="#57AD8D"
+        @update:modelValue="updateHandler"
+      />
     </div>
   </div>
 </template>
@@ -36,8 +43,23 @@ export default {
       type: String
     }
   },
+  data () {
+    return { page: parseInt(this.$route.query.page) || 1, perPage: 5 }
+  },
+  watch: {
+    async page (page) {
+      this.$router.push({ query: { page } })
+      // this.getThreads(page)
+    }
+  },
   methods: {
-    ...mapActions({ fetchForum: 'forums/fetchForum', fetchThreads: 'threads/fetchThreads', fetchUsers: 'users/fetchUsers' })
+    ...mapActions({ fetchForum: 'forums/fetchForum', fetchThreadsByPage: 'threads/fetchThreadsByPage', fetchUsers: 'users/fetchUsers' }),
+    async getThreads (page) {
+      const threads = await this.fetchThreadsByPage({ ids: this.forum.threads, page, perPage: this.perPage })
+      const threadIds = threads.map(thread => thread?.userId)
+      await this.fetchUsers({ ids: threadIds })
+    },
+    updateHandler (page) { }
   },
   computed: {
     ...mapGetters({ threadById: 'threads/threadById' }),
@@ -46,15 +68,19 @@ export default {
     },
     threads () {
       if (!this.forum) return []
-      return this.forum.threads.map(threadId => this.threadById(threadId))
+      return this.$store.state.threads.items.filter(thread => thread.forumId === this.forum.id).map(thread => this.threadById(thread.id))
+    },
+    threadsCount () {
+      return this.forum.threads.length
+    },
+    totalPages () {
+      if (!this.threadsCount) return 0
+      return Math.ceil(this.threadsCount / this.perPage)
     }
   },
   async created () {
-    const forum = await this.fetchForum({ id: this.id })
-    const threads = await this.fetchThreads({ ids: forum.threads })
-    const threadIds = threads.map(thread => thread?.userId)
-    await this.fetchUsers({ ids: threadIds })
-    // console.log('this.forum.threads:', this.forum.threads)
+    await this.fetchForum({ id: this.id })
+    this.getThreads(this.page)
     this.asyncDataStatus_fetched()
   }
 

@@ -9,6 +9,7 @@ import firebaseConfig from '@/config/firebase'
 import FontAwesome from '@/plugins/FontAwesome'
 import ClickOutsideDirective from '@/plugins/ClickOutsideDirective'
 import PageScrollDirective from '@/plugins/PageScrollDirective'
+import Vue3Pagination from '@/plugins/Vue3Pagination'
 
 firebase.initializeApp(firebaseConfig)
 firebase.auth().onAuthStateChanged((user) => {
@@ -23,6 +24,7 @@ app.use(store)
 app.use(FontAwesome)
 app.use(ClickOutsideDirective)
 app.use(PageScrollDirective)
+app.use(Vue3Pagination)
 app.component('AppDate', AppDate)
 app.component('AppSpinner', AppSpinner)
 app.mount('#app')

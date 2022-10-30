@@ -71,8 +71,6 @@ export default {
       const newPost = await postRef.get()
       commit('setItem', { resource: 'posts', item: newPost }, { root: true })
     },
-    fetchPost: ({ dispatch }, { id }) =>
-      dispatch('fetchItem', { resource: 'posts', id }, { root: true }),
     fetchPosts ({ dispatch }, { ids }) {
       return dispatch('fetchItems', { resource: 'posts', ids }, { root: true })
     }
