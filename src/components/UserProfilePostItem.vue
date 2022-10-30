@@ -7,8 +7,8 @@
         alt=""
         class="hide-mobile avatar-small"
       />
-      <p class="title" v-if="thread && threadAuthor">
-        {{ thread.title }}
+      <p class="title" v-if="postsThread && threadAuthor">
+        {{ postsThread.title }}
         <span>{{ subTitleText }}</span>
       </p>
     </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="js">
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
@@ -38,37 +38,42 @@ export default {
       type: Object,
       required: true
     },
-    userName: {
-      type: String
+    user: {
+      type: Object
     }
   },
   mixins: [asyncDataStatus],
   data () {
     return {
-      postAuthor: null,
-      thread: null,
+      postsThread: null,
       threadAuthor: null,
+      isStartingPost: false,
       forumName: ''
     }
   },
   methods: {
-
+    ...mapActions({ fetchPosts: 'posts/fetchPosts', fetchThread: 'threads/fetchThread' })
   },
   computed: {
-    ...mapGetters({ user: 'users/user' }),
+    ...mapGetters({ threadById: 'threads/threadById' }),
     subTitleText () {
-      if (this.post.isFirstPost) {
-        return this.userName + ' started a topic in ' + this.forumName
+      if (this.isStartingPost) {
+        return this.user.name + ' started a topic in ' + this.forumName
       } else {
-        return this.userName + ' replied to ' + this.threadAuthor.name + '\'s topic in ' + this.forumName
+        return this.user.name + ' replied to ' + this.threadAuthor.name + '\'s topic in ' + this.forumName
       }
     }
   },
   async created () {
-    this.postAuthor = await this.$store.dispatch('users/fetchUser', { id: this.post.userId })
-    this.thread = this.post.thread
-    this.threadAuthor = await this.$store.dispatch('users/fetchUser', { id: this.thread.userId })
-    const forum = await this.$store.dispatch('forums/fetchForum', { id: this.thread.forumId })
+    this.postsThread = await this.fetchThread({ id: this.post.threadId })
+    const firstPostId = this.postsThread.firstPostId || this.postsThread.posts[0]
+    this.isStartingPost = firstPostId === this.post.id
+    if (!this.postsThread.userId !== this.user.id) {
+      this.threadAuthor = await this.$store.dispatch('users/fetchUser', { id: this.postsThread.userId })
+    } else {
+      this.threadAuthor = this.user
+    }
+    const forum = await this.$store.dispatch('forums/fetchForum', { id: this.postsThread.forumId })
     this.forumName = forum?.name
     this.asyncDataStatus_fetched()
   }

@@ -7,6 +7,8 @@ import store from '@/store'
 import firebase from 'firebase'
 import firebaseConfig from '@/config/firebase'
 import FontAwesome from '@/plugins/FontAwesome'
+import ClickOutsideDirective from '@/plugins/ClickOutsideDirective'
+import PageScrollDirective from '@/plugins/PageScrollDirective'
 
 firebase.initializeApp(firebaseConfig)
 firebase.auth().onAuthStateChanged((user) => {
@@ -19,6 +21,8 @@ const app = createApp(App)
 app.use(router)
 app.use(store)
 app.use(FontAwesome)
+app.use(ClickOutsideDirective)
+app.use(PageScrollDirective)
 app.component('AppDate', AppDate)
 app.component('AppSpinner', AppSpinner)
 app.mount('#app')

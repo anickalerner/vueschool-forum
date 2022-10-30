@@ -1,10 +1,10 @@
 <template lang="html">
-  <header class="header" id="header">
+  <header class="header" id="header" v-page-scroll="()=>navbarOpen = false" v-click-outside="() => navbarOpen = false">
     <router-link :to="{ name: 'Home' }" class="logo">
       <img src="../assets/img/svg/vueschool-logo.svg" />
     </router-link>
 
-    <div class="btn-hamburger">
+    <div class="btn-hamburger" @click="navbarOpen = !navbarOpen">
       <!-- use .btn-humburger-active to open the menu -->
       <div class="top bar"></div>
       <div class="middle bar"></div>
@@ -12,10 +12,10 @@
     </div>
 
     <!-- use .navbar-open to open nav -->
-    <nav class="navbar">
+    <nav class="navbar" :class="{'navbar-open': navbarOpen}">
       <ul>
         <li v-if="authUser" class="navbar-user">
-          <a @click.prevent="userDropdownOpen = !userDropdownOpen">
+          <a @click.prevent="userDropdownOpen = !userDropdownOpen" v-click-outside="()=> userDropdownOpen = false">
             <img
               v-if="!!authUser.avatar"
               class="avatar-small"
@@ -41,7 +41,7 @@
                 View profile
               </router-link>
               <li class="dropdown-menu-item">
-                <a @click.prevent="$store.dispatch('auth/signOut')">Sign out</a>
+                <a @click.prevent="signOut">Sign out</a>
               </li>
             </ul>
           </div>
@@ -52,9 +52,17 @@
         <li v-if="!authUser" class="navbar-item">
           <router-link :to="{ name: 'Register' }">Register</router-link>
         </li>
+        <li v-if="authUser" class="navbar-item mobile-only">
+          <router-link :to="{ name: 'Profile' }" class="dropdown-menu-item">
+            My profile
+          </router-link>
+        </li>
+        <li v-if="authUser" class="navbar-item mobile-only">
+          <a @click.prevent="signOut">Sign out</a>
+        </li>
       </ul>
 
-      <ul>
+      <!-- <ul>
         <li class="navbar-item">
           <a href="index.html">Home</a>
         </li>
@@ -67,14 +75,14 @@
         <li class="navbar-item">
           <a href="thread.html">Thread</a>
         </li>
-        <!-- Show these option only on mobile-->
+        <!- Show these option only on mobile->
         <li class="navbar-item mobile-only">
           <a href="profile.html">My Profile</a>
         </li>
         <li class="navbar-item mobile-only">
           <a href="#">Logout</a>
         </li>
-      </ul>
+      </ul> -->
     </nav>
   </header>
 </template>
@@ -85,16 +93,23 @@ export default {
   name: 'the-navbar',
   data () {
     return {
-      userDropdownOpen: false
+      userDropdownOpen: false,
+      navbarOpen: false
     }
   },
   computed: {
     ...mapGetters('auth', ['authUser'])
+  },
+  created () {
+    this.$router.beforeEach(() => {
+      this.navbarOpen = false
+    })
+  },
+  methods: {
+    signOut () {
+      this.$store.dispatch('auth/signOut')
+      this.$router.push({ name: 'Home' })
+    }
   }
 }
 </script>
-
-<style scoped lang="css">
-.the-navbar {
-}
-</style>

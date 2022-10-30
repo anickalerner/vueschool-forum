@@ -15,8 +15,9 @@
       <UserProfilePostList
         v-if="user && user.posts && user.posts.length > 0"
         :posts="user.posts"
-        :userName="user.name"
+        :user="user"
       />
+      <AppInfiniteScroll @load="fetchUserPosts" :done="user.posts.length === user.postsCount"/>
     </div>
   </div>
 </template>
@@ -27,7 +28,7 @@ import asyncDataStatus from '@/mixins/asyncDataStatus'
 import UserProfileCard from '../components/UserProfileCard.vue'
 import UserProfileCardEditor from '@/components/UserProfileCardEditor.vue'
 import UserProfilePostList from '@/components/UserProfilePostList.vue'
-
+import AppInfiniteScroll from '@/components/AppInfiniteScroll.vue'
 export default {
   name: 'profile-page',
   props: {
@@ -38,13 +39,22 @@ export default {
   },
   mixins: [asyncDataStatus],
   computed: {
-    ...mapGetters({ user: 'auth/authUser' })
+    ...mapGetters({ user: 'auth/authUser' }),
+    startAfter () {
+      if (this.user.posts.length === 0) return null
+      return this.user.posts[this.user.posts.length - 1]
+    }
+  },
+  methods: {
+    fetchUserPosts () {
+      this.$store.dispatch('auth/fetchAuthUserPosts', { startAfter: this.startAfter })
+    }
   },
   async created () {
-    await this.$store.dispatch('auth/fetchAuthUserPosts')
+    await this.fetchUserPosts()
     this.asyncDataStatus_fetched()
   },
-  components: { UserProfileCard, UserProfileCardEditor, UserProfilePostList }
+  components: { UserProfileCard, UserProfileCardEditor, UserProfilePostList, AppInfiniteScroll }
 }
 </script>
 

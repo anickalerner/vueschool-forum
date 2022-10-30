@@ -52,7 +52,9 @@ export default {
   async created () {
     const forum = await this.fetchForum({ id: this.id })
     const threads = await this.fetchThreads({ ids: forum.threads })
-    await this.fetchUsers({ ids: threads.map(thread => thread.userId) })
+    const threadIds = threads.map(thread => thread?.userId)
+    await this.fetchUsers({ ids: threadIds })
+    // console.log('this.forum.threads:', this.forum.threads)
     this.asyncDataStatus_fetched()
   }
 

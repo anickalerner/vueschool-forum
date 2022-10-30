@@ -54,6 +54,7 @@ export default {
         },
         { root: true }
       )
+      return newPost
     },
     async updatePost ({ commit, state, rootState }, { text, id }) {
       const post = {

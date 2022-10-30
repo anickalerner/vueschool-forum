@@ -4,7 +4,7 @@ export default {
     state.unsubscribes.forEach((unsubscribe) => unsubscribe())
     commit('clearAllUnsubscribes')
   },
-  fetchItem ({ commit }, { resource, id, handleUnsubscribe = null }) {
+  fetchItem ({ commit }, { resource, id, handleUnsubscribe = null, doSetItems = true }) {
     return new Promise((resolve) => {
       const unsubscribe = firebase
         .firestore()
@@ -13,7 +13,7 @@ export default {
         .onSnapshot((doc) => {
           if (doc.exists) {
             const item = { ...doc.data(), id: doc.id }
-            commit('setItem', { resource, item })
+            if (doSetItems) commit('setItem', { resource, item })
             resolve(item)
           } else {
             resolve(null)
@@ -26,11 +26,11 @@ export default {
       }
     })
   },
-  fetchItems ({ dispatch }, { resource, ids }) {
+  fetchItems ({ dispatch }, { resource, ids, doSetItems }) {
     if (!ids || ids.length === 0) return []
     return Promise.all(
       ids.map((item) => {
-        return dispatch('fetchItem', { resource, id: item })
+        return dispatch('fetchItem', { resource, id: item, doSetItems })
       })
     )
   }

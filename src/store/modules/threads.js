@@ -54,6 +54,7 @@ export default {
         slug,
         title,
         userId: rootState.auth.authId,
+        firstPostId: '',
         posts: []
       }
       const userRef = userFBRef(thread.userId)
@@ -98,14 +99,18 @@ export default {
         },
         { root: true }
       )
-      dispatch('posts/createPost', firstPost, { root: true })
+      const newPost = await dispatch('posts/createPost', firstPost, { root: true })
+      newThread.firstPostId = newPost.id
+      const updateBatch = firebase.firestore().batch()
+      updateBatch.update(threadRef, { ...findById(state.items, newThread.id), firstPostId: newPost.id })
+      await updateBatch.commit()
       return newThread
     },
-    async updateThread ({ commit, state }, { title, text, id }) {
+    async updateThread ({ commit, state, rootState }, { title, text, id }) {
       const batch = firebase.firestore().batch()
       const thread = { ...findById(state.items, id), title }
       const threadRef = threadFBRef(id)
-      const post = { ...findById(state.posts, thread.posts[0]), text }
+      const post = { ...findById(rootState.posts.items, thread.posts[0]), text }
       const postRef = postFBRef(thread.posts[0])
       batch.update(threadRef, thread)
       batch.update(postRef, post)
