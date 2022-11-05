@@ -99,7 +99,7 @@ const routes = [
 ]
 
 async function checkItemPath (to, next, action) {
-  const actionParam = to.params?.id ? { id: to.params.id } : {}
+  const actionParam = to.params?.id ? { id: to.params.id, once: true } : {}
   const result = await store.dispatch(action, actionParam)
   if (result) {
     return next()

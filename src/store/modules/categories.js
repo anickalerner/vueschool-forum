@@ -1,3 +1,4 @@
+import { makeFetchItemAction } from '@/helpers'
 import firebase from 'firebase'
 export default {
   namespaced: true,
@@ -6,8 +7,7 @@ export default {
   },
   getters: {},
   actions: {
-    fetchCategory: ({ dispatch }, { id }) =>
-      dispatch('fetchItem', { resource: 'categories', id }, { root: true }),
+    fetchCategory: makeFetchItemAction({ resource: 'categories' }),
     fetchCategories ({ commit }) {
       const resource = 'categories'
       return new Promise((resolve) => {

@@ -33,3 +33,16 @@ export const makeAppendChildToParentMutation = ({ parent, child }) => {
     }
   }
 }
+
+export const makeFetchItemAction = ({ resource }) => {
+  if (resource === 'threads') {
+    console.log('fetch thread')
+  }
+  return ({ dispatch }, payload) =>
+    dispatch('fetchItem', { resource, ...payload }, { root: true })
+}
+
+export const makeFetchItemsAction =
+  ({ resource }) =>
+    ({ dispatch }, payload) =>
+      dispatch('fetchItems', { resource, ...payload }, { root: true })

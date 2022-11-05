@@ -1,4 +1,9 @@
-import { findById, makeAppendChildToParentMutation } from '@/helpers'
+import {
+  findById,
+  makeAppendChildToParentMutation,
+  makeFetchItemAction,
+  makeFetchItemsAction
+} from '@/helpers'
 
 export default {
   namespaced: true,
@@ -11,11 +16,8 @@ export default {
     }
   },
   actions: {
-    fetchForum: ({ dispatch }, { id }) =>
-      dispatch('fetchItem', { resource: 'forums', id }, { root: true }),
-    fetchForums ({ dispatch }, { ids }) {
-      return dispatch('fetchItems', { resource: 'forums', ids }, { root: true })
-    }
+    fetchForum: makeFetchItemAction({ resource: 'forums' }),
+    fetchForums: makeFetchItemsAction({ resource: 'forums' })
   },
   mutations: {
     appendThreadToForum: makeAppendChildToParentMutation({

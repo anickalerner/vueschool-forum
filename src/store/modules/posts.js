@@ -1,5 +1,5 @@
 import { threadFBRef, postsFBRef, postFBRef, userFBRef } from '../helpers'
-import { findById } from '@/helpers'
+import { findById, makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 import firebase from 'firebase'
 
 export default {
@@ -71,8 +71,7 @@ export default {
       const newPost = await postRef.get()
       commit('setItem', { resource: 'posts', item: newPost }, { root: true })
     },
-    fetchPosts ({ dispatch }, { ids }) {
-      return dispatch('fetchItems', { resource: 'posts', ids }, { root: true })
-    }
+    fetchPost: makeFetchItemAction({ resource: 'post' }),
+    fetchPosts: makeFetchItemsAction({ resource: 'posts' })
   }
 }

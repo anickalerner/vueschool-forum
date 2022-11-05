@@ -11,8 +11,13 @@
       </router-link>
     </h1>
     <p>
+      <a @click.prevent="createNotification()">Add notification</a><br />
+      <a @click.prevent="deleteNotification()">Remove notification</a>
+    </p>
+    <p>
       By <a href="#" class="link-unstyled">{{ thread.author?.name }}</a
-      >, <app-date :timestamp="thread?.publishedAt" />.
+      >,
+      <!-- <app-date :timestamp="thread?.publishedAt" /> -->
       <span
         style="float: right; margin-top: 2px"
         class="hide-mobile text-faded text-small"
@@ -39,9 +44,10 @@
 <script lang="js">
 import PostList from '@/components/PostList.vue'
 import PostEditor from '@/components/PostEditor.vue'
-import { findById } from '@/helpers'
 import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus.js'
+import useNotification from '@/composables/useNotifications.js'
+import difference from 'lodash/difference'
 
 export default {
   name: 'page-thread-show',
@@ -53,10 +59,12 @@ export default {
       type: String
     }
   },
+  setup () {
+    const { addNotification, removeEldestNotification } = useNotification()
+    return { addNotification, removeEldestNotification }
+  },
   methods: {
-    userById (userId) {
-      return findById(this.users, userId)
-    },
+    ...mapActions({ createPost: 'posts/createPost', fetchThread: 'threads/fetchThread', fetchPosts: 'posts/fetchPosts', fetchUsers: 'users/fetchUsers' }),
     addPost (eventData) {
       const post = {
         ...eventData.post,
@@ -64,7 +72,23 @@ export default {
       }
       this.createPost(post)
     },
-    ...mapActions({ createPost: 'posts/createPost', fetchThread: 'threads/fetchThread', fetchPosts: 'posts/fetchPosts', fetchUsers: 'users/fetchUsers' })
+    createNotification () {
+      this.addNotification({ message: Math.random() + ' some text' })
+    },
+    deleteNotification () {
+      this.removeEldestNotification()
+    },
+    async fetchUsersAndPosts (postIds) {
+      const posts = await this.fetchPosts({
+        ids: postIds,
+        onSnapshot: ({ previousItem }) => {
+          if (!this.asyncDataStatus_ready || (previousItem?.edited && !previousItem?.edited?.at)) return
+          this.addNotification({ message: 'Thread was updated', timeout: 5000 })
+        }
+      })
+      const users = posts.map(post => post.userId).concat(this.thread.userId)
+      await this.fetchUsers({ ids: users })
+    }
   },
   computed: {
     ...mapGetters({ authUser: 'auth/authUser', threadById: 'threads/threadById' }),
@@ -85,10 +109,19 @@ export default {
     }
   },
   async created () {
-    const thread = await this.fetchThread({ id: this.id })
-    const posts = await this.fetchPosts({ ids: thread.posts })
-    const users = posts.map(post => post.userId).concat(thread.userId)
-    await this.fetchUsers({ ids: users })
+    const thread = await this.fetchThread({
+      id: this.id,
+      onSnapshot: async ({ item, previousItem, isLocal }) => {
+        if (!this.asyncDataStatus_ready || isLocal) return
+        const newPosts = difference(previousItem.posts, item.posts)
+        if (newPosts.length > 0) {
+          await this.fetchUsersAndPosts(newPosts)
+        } else {
+          this.addNotification({ message: 'Thread was updated', timeout: 3000 })
+        }
+      }
+    })
+    await this.fetchUsersAndPosts(thread.posts)
     this.asyncDataStatus_fetched()
   }
 }

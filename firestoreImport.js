@@ -1,13 +1,15 @@
+
 // Imports
 const firestoreService = require('firestore-export-import')
 const firebaseConfig = require('./src/config/firebase.js')
 const serviceAccount = require('./serviceAccount.json')
 const fs = require('fs')
-const tempFileName = `${__dirname}/data-temp.json`
+const path = require('path')
+const tempFileName = path.join(__dirname, '/data-temp.json')
 
 // procedure
 ;(async () => {
-  const fileContents = fs.readFileSync(`${__dirname}/src/data.json`, 'utf8')
+  const fileContents = fs.readFileSync(path.join(__dirname, '/src/data.json', 'utf8'))
   const data = JSON.parse(fileContents)
   const transformed = transformDataForFirestore(data)
   fs.writeFileSync(tempFileName, JSON.stringify(transformed))

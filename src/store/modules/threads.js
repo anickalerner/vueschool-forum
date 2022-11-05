@@ -1,7 +1,9 @@
 import {
   findById,
   docToResource,
-  makeAppendChildToParentMutation
+  makeAppendChildToParentMutation,
+  makeFetchItemAction,
+  makeFetchItemsAction
 } from '@/helpers'
 import firebase from 'firebase'
 
@@ -135,16 +137,8 @@ export default {
       commit('setItem', { resource: 'posts', item: newPost }, { root: true })
       return docToResource(newThread)
     },
-    fetchThread ({ dispatch }, { id }) {
-      return dispatch('fetchItem', { resource: 'threads', id }, { root: true })
-    },
-    fetchThreads ({ dispatch }, { ids }) {
-      return dispatch(
-        'fetchItems',
-        { resource: 'threads', ids },
-        { root: true }
-      )
-    },
+    fetchThread: makeFetchItemAction({ resource: 'threads' }),
+    fetchThreads: makeFetchItemsAction({ resource: 'threads' }),
     fetchThreadsByPage ({ dispatch, commit }, { ids, page, perPage = 10 }) {
       commit('clearThreads')
       const chunks = chunk(ids, perPage)

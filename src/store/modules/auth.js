@@ -10,7 +10,7 @@ export default {
     authObserverUnsubscribe: null
   },
   getters: {
-    authUser: (state, getters, rootState, rootGetters) => {
+    authUser: (state, _, __, rootGetters) => {
       return rootGetters['users/user'](state.authId)
     }
   },
@@ -104,7 +104,11 @@ export default {
         .orderBy('publishedAt', 'desc')
         .limit(10)
       if (startAfter) {
-        const doc = await firebase.firestore().collection('posts').doc(startAfter.id).get()
+        const doc = await firebase
+          .firestore()
+          .collection('posts')
+          .doc(startAfter.id)
+          .get()
         query = query.startAfter(doc)
       }
       const posts = await query.get()
