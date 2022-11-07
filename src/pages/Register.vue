@@ -40,12 +40,22 @@
         </div>
 
         <div class="form-group">
-          <label for="avatar">Avatar</label>
+          <label for="avatar"
+            >Avatar
+            <div v-if="avatarPreview">
+              <img :src="avatarPreview" class="avatar-large" />
+              <button @click.prevent="avatarPreview = null">
+                Change image
+              </button>
+            </div>
+          </label>
           <input
-            v-model="form.avatar"
+            v-show="!avatarPreview"
             id="avatar"
-            type="text"
+            type="file"
+            @change="handleAvatarInput"
             class="form-input"
+            accept="image/*"
           />
         </div>
 
@@ -76,12 +86,13 @@ export default {
   mixins: [successRedirect],
   data () {
     return {
+      avatarPreview: null,
       form: {
         name: '',
         username: '',
         password: '',
         email: '',
-        avatar: ''
+        avatar: null
       }
 
     }
@@ -94,8 +105,15 @@ export default {
     async signUpWithGoogle () {
       await this.$store.dispatch('auth/signUpWithGoogle')
       this.successRedirect()
+    },
+    handleAvatarInput (e) {
+      this.form.avatar = e.target.files[0]
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        this.avatarPreview = event.target.result
+      }
+      reader.readAsDataURL(this.form.avatar)
     }
-
   },
   created () {
     this.$emit('ready')

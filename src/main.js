@@ -12,12 +12,6 @@ import PageScrollDirective from '@/plugins/PageScrollDirective'
 import Vue3Pagination from '@/plugins/Vue3Pagination'
 
 firebase.initializeApp(firebaseConfig)
-firebase.auth().onAuthStateChanged((user) => {
-  store.dispatch('auth/unsubscribeAuthSnapshot')
-  if (user) {
-    store.dispatch('auth/fetchAuthUser')
-  }
-})
 const app = createApp(App)
 app.use(router)
 app.use(store)

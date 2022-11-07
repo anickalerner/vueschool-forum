@@ -38,6 +38,16 @@ export default {
       const result = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
+      if (avatar) {
+        const userStorage = firebase
+          .storage()
+          .ref()
+          .child(
+            `uploads/${result.user.uid}/images/${Date.now()}-${avatar.name}`
+          )
+        const snapshot = await userStorage.put(avatar)
+        avatar = await snapshot.ref.getDownloadURL()
+      }
       await dispatch(
         'users/createUser',
         {

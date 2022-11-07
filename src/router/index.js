@@ -116,7 +116,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior (to) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         const scroll = {}
         if (to.meta.toTop) scroll.top = 0
